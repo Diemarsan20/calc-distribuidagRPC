@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package calculo;
+
+// Petición genérica
+message CalculoRequest {
+  string op = 1;      // "add", "sub", "mul", "div", "sum_squares"
+  double a = 2;       // operando A (o inicio de rango)
+  double b = 3;       // operando B (o fin de rango)
+  int64 n = 4;        // para sum_squares (n)
+}
+
+// Parte de un cálculo distribuido
+message Part {
+  int64 a = 1;
+  int64 b = 2;
+  int64 result = 3;
+  string worker = 4;
+}
+
+// Respuesta
+message CalculoResponse {
+  bool ok = 1;
+  double result = 2;
+  string error = 3;
+  int64 a = 4;
+  int64 b = 5;
+  string worker = 6;
+  repeated Part parts = 7;
+}
+
+// Servicio que ofrecen los workers
+service OperacionService {
+  rpc Calcular (CalculoRequest) returns (CalculoResponse);
+}
+
+// Servicio que ofrece el servidor de cálculo
+service CalculoService {
+  rpc CalculoTotal (CalculoRequest) returns (CalculoResponse);
+}
